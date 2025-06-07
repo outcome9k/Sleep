@@ -3,7 +3,6 @@
 <pre>
 <code id="code1">bash &lt;(curl -fsSL https://raw.githubusercontent.com/outcome9k/Sleep/main/slop.sh)</code>
 </pre>
-<button onclick="copyToClipboard('code1')">📋 Copy</button>
 
 <h2>🌀 Alternative Run</h2>
 
