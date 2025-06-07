@@ -1,0 +1,132 @@
+#!/bin/bash
+clear
+
+# === Colors ===
+RED='\033[1;31m'; GREEN='\033[1;32m'; YELLOW='\033[1;33m'; BLUE='\033[1;34m'
+CYAN='\033[1;36m'; NC='\033[0m'
+CHECK="${GREEN}[✓]${NC}"; CROSS="${RED}[✗]${NC}"; ARROW="${CYAN}→${NC}"
+LINE="$(printf '%*s\n' "$(tput cols)" '' | tr ' ' '-')"
+
+# === Show Header ===
+display_header() {
+    echo -e "${BLUE}${LINE}${NC}"
+    echo -e "${CYAN}        SERVER MANAGEMENT TOOLKIT${NC}"
+    echo -e "${BLUE}${LINE}${NC}"
+}
+
+# === Show System Info ===
+show_system_info() {
+    PUBLIC_IP=$(curl -s https://api.ipify.org)
+    DOMAIN=$(hostname -f 2>/dev/null)
+    NS=$(grep "nameserver" /etc/resolv.conf | head -n1 | awk '{print $2}')
+    RAM=$(free -h | awk '/Mem:/ {print $3 "/" $2}')
+    CPU=$(grep -m1 "model name" /proc/cpuinfo | cut -d: -f2-)
+    CORES=$(nproc)
+    TEMP=$(sensors 2>/dev/null | grep 'Package id 0' | awk '{print $4}')
+    [[ -z "$TEMP" ]] && TEMP="N/A"
+
+    echo -e "\n${BLUE}=== SYSTEM INFO ===${NC}"
+    echo -e "${ARROW} IP: ${PUBLIC_IP:-N/A}"
+    echo -e "${ARROW} Domain: ${DOMAIN:-N/A}"
+    echo -e "${ARROW} Nameserver: ${NS:-N/A}"
+    echo -e "${ARROW} RAM Usage: $RAM"
+    echo -e "${ARROW} CPU: ${CPU:-N/A}"
+    echo -e "${ARROW} Cores: $CORES"
+    echo -e "${ARROW} Temp: $TEMP"
+    echo -e "${LINE}"
+}
+
+# === Show Server Status ===
+show_server_status() {
+    echo -e "\n${BLUE}=== SERVICES STATUS ===${NC}"
+    for svc in nginx ssh xray openvpn fail2ban; do
+        systemctl is-active --quiet "$svc" \
+            && echo -e "${CHECK} $svc is running" \
+            || echo -e "${CROSS} $svc is NOT running"
+    done
+
+    echo -e "\n${BLUE}=== OPEN PORTS ===${NC}"
+    for p in 22 80 443 8080 8443 5555; do
+        ss -tuln | grep -q ":$p " \
+            && echo -e "${CHECK} Port $p open" \
+            || echo -e "${CROSS} Port $p closed"
+    done
+    echo -e "${LINE}"
+}
+
+# === Show Menu ===
+show_menu() {
+    echo -e "\n${YELLOW}MAIN MENU${NC}"
+    echo -e "${ARROW} 0  - System Upgrade"
+    echo -e "${ARROW} 1  - Install 3X-UI (MHSanaei)"
+    echo -e "${ARROW} 2  - Install 3X-UI (Alireza0)"
+    echo -e "${ARROW} 3  - Install UDP Boost (404)"
+    echo -e "${ARROW} 4  - Install UDP Custom Manager"
+    echo -e "${ARROW} 5  - Install DarkSSH"
+    echo -e "${ARROW} 6  - Install 404-SSH Manager"
+    echo -e "${ARROW} 7  - Install ZI-VPN"
+    echo -e "${ARROW} 8  - Uninstall ZI-VPN"
+    echo -e "${ARROW} 9  - Install AutoScript (Python)"
+    echo -e "${ARROW} 10 - Install zi-VPN Menu"
+    echo -e "${ARROW} 11 - Install zi-v1"
+    echo -e "${ARROW} 12 - Install zi-v2 AMD"
+    echo -e "${ARROW} 13 - Install zi-v2 ARM"
+    echo -e "${ARROW} 14 - Install SSH + SlowDNS 443"
+    echo -e "${ARROW} 404 - Install Selector Tool"
+    echo -e "${ARROW} info - Show System Info"
+    echo -e "${ARROW} status - Show Server Status"
+    echo -e "${ARROW} help - Show Help"
+    echo -e "${ARROW} exit - Exit Script"
+    echo -e "${LINE}"
+}
+
+# === Install Option ===
+install_option() {
+    case $1 in
+        0) apt update && apt upgrade -y ;;
+        1) bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh) ;;
+        2) bash <(curl -Ls https://raw.githubusercontent.com/alireza0/x-ui/master/install.sh) ;;
+        3) git clone https://github.com/nyeinkokoaung404/udp-custom && cd udp-custom && chmod +x install.sh && ./install.sh ;;
+        4) wget -O install.sh https://raw.githubusercontent.com/noobconner21/UDP-Custom-Script/main/install.sh && chmod +x install.sh && bash install.sh ;;
+        5) wget https://raw.githubusercontent.com/sbatrow/DARKSSH-MANAGER/master/Dark && chmod +x Dark && ./Dark ;;
+        6) wget https://raw.githubusercontent.com/nyeinkokoaung404/ssh-manger/main/hehe && chmod +x hehe && ./hehe ;;
+        7) wget -O zi.sh https://raw.githubusercontent.com/zahidbd2/udp-zivpn/main/zi.sh && chmod +x zi.sh && ./zi.sh ;;
+        8) wget -O uninstall.sh https://raw.githubusercontent.com/zahidbd2/udp-zivpn/main/uninstall.sh && chmod +x uninstall.sh && ./uninstall.sh ;;
+        9) apt update && apt install -y gnupg tmux python3 && tmux new -d -s autoscript "wget https://raw.githubusercontent.com/DindaPutriFN/Autoscript/main/funny.py && chmod +x funny.py && python3 funny.py" ;;
+        10) bash <(curl -fsSL https://raw.githubusercontent.com/powermx/zivpn/main/menuzivpn) ;;
+        11) bash <(curl -fsSL https://raw.githubusercontent.com/powermx/zivpn/main/ziv1.sh) ;;
+        12) bash <(curl -fsSL https://raw.githubusercontent.com/powermx/zivpn/main/ziv2.sh) ;;
+        13) bash <(curl -fsSL https://raw.githubusercontent.com/powermx/zivpn/main/ziv3.sh) ;;
+        14) wget https://raw.githubusercontent.com/hidessh99/autoscript-ssh-slowdns/main/setup.sh && chmod +x setup.sh && ./setup.sh ;;
+        404) bash <(curl -fsSL https://raw.githubusercontent.com/nyeinkokoaung404/Selector/main/install.sh) ;;
+        *) echo -e "${CROSS} Invalid option." ;;
+    esac
+}
+
+# === Help ===
+show_help() {
+    echo -e "\n${CYAN}HELP:${NC}"
+    echo -e "${ARROW} Choose number to install related script"
+    echo -e "${ARROW} Use 'info' to view system info"
+    echo -e "${ARROW} Use 'status' to view running services and ports"
+    echo -e "${ARROW} Use 'exit' to quit this script"
+    echo -e "${LINE}"
+}
+
+# === Main ===
+display_header
+show_system_info
+show_server_status
+
+while true; do
+    show_menu
+    read -rp "$(echo -e "${CYAN}Enter option: ${NC}")" CHOICE
+    case "$CHOICE" in
+        exit) echo -e "${YELLOW}Bye!${NC}"; break ;;
+        info) show_system_info ;;
+        status) show_server_status ;;
+        help) show_help ;;
+        *) install_option "$CHOICE" ;;
+    esac
+    echo -e "${CHECK} Operation done!\n"
+done
