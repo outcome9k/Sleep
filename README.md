@@ -1,17 +1,61 @@
----
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Run Sleep Script</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #111;
+      color: #eee;
+      padding: 20px;
+    }
+    pre {
+      background: #222;
+      padding: 10px;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+    button {
+      background-color: #0f62fe;
+      color: white;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 5px;
+    }
+    button:hover {
+      background-color: #0353e9;
+    }
+  </style>
+</head>
+<body>
 
-### 📌 အဓိကသတိပြုရန်
+<h2>🚀 How to Run Sleep Script</h2>
 
-- `bash` block စတဲ့ ` ```bash ` ရေးတဲ့အခါမှာ **အဆုံးမှာ** ` ``` ` (backticks သုံးကြောင်း) နဲ့ပိတ်ဖို့လိုပါတယ်။
-- Code block တစ်ခုချင်းစီမှာ `bash` commands တစ်ကြောင်းတည်းထည့်ရင် Copy button မှာ **တိတိကျကျ** တစ်ကြောင်းတည်း Copy လုပ်နိုင်ပါတယ်။
+<pre>
+<code id="code1">bash &lt;(curl -fsSL https://raw.githubusercontent.com/outcome9k/Sleep/main/slop.sh)</code>
+</pre>
+<button onclick="copyToClipboard('code1')">📋 Copy</button>
 
----
+<h2>🌀 Alternative Run</h2>
 
-အခု code ကို GitHub `README.md` မှာ ထည့်လိုက်ရင် ⬇️ ဒီလိုပြမှာပါ
+<pre>
+<code id="code2">bash &lt;(curl -s https://raw.githubusercontent.com/outcome9k/Sleep/main/slopp.sh)</code>
+</pre>
+<button onclick="copyToClipboard('code2')">📋 Copy</button>
 
----
+<script>
+function copyToClipboard(id) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    alert("✅ Copied to clipboard!");
+  }, () => {
+    alert("❌ Failed to copy.");
+  });
+}
+</script>
 
-## How to Run
-
-```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/outcome9k/Sleep/main/slop.sh)
+</body>
+</html>
